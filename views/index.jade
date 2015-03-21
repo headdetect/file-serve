@@ -1,0 +1,15 @@
+doctype html
+html(lang="en")
+    head
+        title= title
+    body
+        h3 Current Path: #{root}
+        ul
+            each file in files
+                if file.directory
+                    li
+                        a(href='/browse#{file.path}') #{file.name}
+                else
+                    li
+                        a(href='/raw#{file.path}') #{file.name}
+                        small  #{file.size} bytes

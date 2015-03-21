@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "description": "A very lightweight file browser and server",
   "dependencies": {
-    "express": "^4.12.3"
+    "express": "^4.12.3",
+    "jade": "~1.9.2",
+    "dir": "~0.1.2"
   }
 }
