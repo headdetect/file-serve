@@ -1,6 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 var fsPath = require('path');
+var pretty = require('prettysize');
 
 var app = express();
 app.set('view engine', 'jade');
@@ -18,8 +19,9 @@ var options = {
 };
 
 // Access raw files //
-app.get('/raw/:path', function(req, res) {
-    var path = req.params.path;
+app.get('/raw/*', function(req, res) {
+    var path = req.url.substr('/raw/'.length);
+
     res.sendFile(path, options, function (err) {
         if (err) {
             res.status(404).send('Unknown File');
@@ -30,21 +32,14 @@ app.get('/raw/:path', function(req, res) {
     });
 });
 
-
-app.get('/browse/', function(req, res) {
-    var path = '/';
-    res.render('index', { title: 'File Serve - ' + path, root: path, files: getFilesFromPath(path) });
-});
-
-app.get('/browse/:path', function(req, res) {
-    var path = req.params.path;
-
-    res.render('index', { title: 'File Serve - ' + path, root: path, files: getFilesFromPath(path) });
+app.get(['/browse/*', '/browse/'], function(req, res) {
+    var path = req.url.substr('/browse/'.length);
+    res.render('index', { title: 'File Serve - ' + path, root: path, parent: fsPath.join('/browse/', path, "../"), files: getFilesFromPath(path) });
 });
 
 
-app.get('/json/:path', function(req, res) {
-    var path = req.params.path;
+app.get(['/json/*', '/json/'], function(req, res) {
+    var path = req.url.substr('/json/'.length);
 
     res.type('application/json');
     res.send({
@@ -52,15 +47,7 @@ app.get('/json/:path', function(req, res) {
         files: getFilesFromPath(path)
     });
 });
-app.get('/json/', function(req, res) {
-    var path = '/';
 
-    res.type('application/json');
-    res.send({
-        path: path,
-        files: getFilesFromPath(path)
-    });
-});
 
 app.get('/', function(req, res) {
     res.redirect('/browse/');
@@ -88,20 +75,20 @@ function getFilesFromPath(path) {
             var files = fs.readdirSync(path);
 
             for(var i in files) {
-                var file = path + "/" + files[i];
+                var file = fsPath.join(path, files[i]);
                 var iStat = fs.statSync(file);
                 if (iStat.isDirectory()) {
                     directory.push({
                         "name": files[i],
-                        "path": relPath + files[i],
-                        "size": 0,
+                        "path": relPath == '/' ? files[i] : fsPath.join(relPath, files[i]),
+                        "size": pretty(0),
                         "directory": true
                     });
                 } else if(iStat.isFile()) {
                     directory.push({
                         "name": files[i],
-                        "path": relPath + files[i],
-                        "size": iStat.size,
+                        "path": relPath == '/' ? files[i] : fsPath.join(relPath, files[i]),
+                        "size": pretty(iStat.size),
                         "directory": false
                     });
                 }
@@ -121,7 +108,7 @@ function getFilesFromPath(path) {
             return {
                 "name": fsPath.basename(path),
                 "path": relPath,
-                "size": stats.size,
+                "size": pretty(stats.size),
                 "directory": false
             }
         }

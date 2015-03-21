@@ -5,6 +5,7 @@
   "dependencies": {
     "express": "^4.12.3",
     "jade": "~1.9.2",
-    "dir": "~0.1.2"
+    "dir": "~0.1.2",
+    "prettysize": "0.0.3"
   }
 }
