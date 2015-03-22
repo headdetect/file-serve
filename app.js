@@ -10,7 +10,6 @@ var root = __dirname + '/files/';
 
 // File options //
 var options = {
-    root: root,
     dotfiles: 'allow',
     headers: {
         'x-timestamp': Date.now(),
@@ -20,16 +19,24 @@ var options = {
 
 // Access raw files //
 app.get('/raw/*', function(req, res) {
-    var path = req.url.substr('/raw/'.length);
+    var path = fsPath.join(root, req.url.substr('/raw/'.length));
 
-    res.sendFile(path, options, function (err) {
-        if (err) {
+    fs.exists(path, function(exists) {
+        if(exists) {
+            res.sendFile(path, options, function (err) {
+                if (err) {
+                    console.log('Error retrieving:' + path + "(" + err + ")");
+                }
+                else {
+                    console.log('Served:' + path);
+                }
+            });
+        } else {
             res.status(404).send('Unknown File');
         }
-        else {
-            console.log('Served:' + path);
-        }
     });
+
+
 });
 
 app.get(['/browse/*', '/browse/'], function(req, res) {
