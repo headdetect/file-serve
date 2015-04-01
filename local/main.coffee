@@ -1,0 +1,1 @@
+console.log("Coffee script is a go!")

@@ -1,10 +1,51 @@
+$orange: #FF9800;
+
 *, html, body {
     margin: 0;
     padding: 0;
     clear: both;
+}
 
-  .container {
+body {
+  font-family: 'Open Sans', sans-serif;
+}
 
+.container {
+  padding: 50px;
+  font-weight: lighter;
+
+  h1 {
+    font-size: 3em;
+    color: #333;
+    font-weight: lighter;
+
+    small.path {
+      font-size: 80%;
+      color: #555;
+      margin-left: 15px;
+      vertical-align: middle;
+    }
   }
 
+  ul {
+    list-style: none;
+    margin-left: 10px;
+
+    li {
+      margin: 10px;
+
+      a {
+        color: $orange;
+        text-decoration: none;
+
+        &:hover {
+          color: darken($orange, 10)
+        }
+      }
+
+      small.file-size {
+        color: #666;
+      }
+    }
+  }
 }

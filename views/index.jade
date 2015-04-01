@@ -3,9 +3,11 @@ html(lang="en")
     head
         title= title
         link(rel='stylesheet', href='/local/main.css')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,300,700')
     body
         .container
-            h3 Current Path: #{root}
+            h1 Path
+                small.path #{root == '/' || root == '' ? '/' : root}
             ul
                 if root != '/' && root != ''
                     li
@@ -17,4 +19,5 @@ html(lang="en")
                     else
                         li
                             a(href='/raw/#{file.path}') #{file.name}
-                            small  #{file.size}
+                            small.file-size  #{file.size}
+        script(src="/local/main.js")

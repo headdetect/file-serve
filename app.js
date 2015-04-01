@@ -163,7 +163,7 @@ function transformFile(file) {
 
     var transforms = {
         ".css": function(_file) {
-            var newFile = _file.substr(0, _file.length - 3) + "scss"; // Change from .css to .scss //
+            var newFile = _file.substr(0, _file.length - "css".length) + "scss"; // Change from .css to .scss //
 
             if (!fs.existsSync(newFile)) return null;
 
@@ -176,11 +176,11 @@ function transformFile(file) {
             };
         },
         ".js": function(_file) {
-            var newFile = _file.substr(0, _file.length - 3) + "coffee"; // Change from .css to .scss //
+            var newFile = _file.substr(0, _file.length - "js".length) + "coffee"; // Change from .js to .coffee //
 
             if (!fs.existsSync(newFile)) return null;
 
-            var fileData = fs.readFileSync(_file, {encoding: "utf8"});
+            var fileData = fs.readFileSync(newFile, {encoding: "utf8"});
             return {
                 // TODO: Coffeescript compilation //
                 data: fileData,
