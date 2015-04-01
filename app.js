@@ -2,6 +2,7 @@ var express = require('express');
 var fs = require('fs');
 var fsPath = require('path');
 var pretty = require('prettysize');
+var sass = require('node-sass');
 
 var app = express();
 app.set('view engine', 'jade');
@@ -55,6 +56,36 @@ app.get(['/json/*', '/json/'], function(req, res) {
     });
 });
 
+app.get('/local/*', function(req, res) {
+    var path = __dirname + req.url;
+    var file = req.url.substr('/local/'.length);
+
+    if(file == "") {
+        res.status(403).send("Access to root is forbidden");
+        return;
+    }
+    var transform = transformFile(path);
+
+    if (transform) {
+        res.type(transform.type);
+        res.send(transform.data);
+    } else {
+        fs.exists(path, function(exists) {
+            if (exists) {
+                res.sendFile(path, options, function (err) {
+                    if (err) {
+                        console.log('Error retrieving:' + path + "(" + err + ")");
+                    }
+                    else {
+                        console.log('Served:' + path);
+                    }
+                });
+            } else {
+                res.status(404).send('Unknown File: ' + path);
+            }
+        });
+    }
+});
 
 app.get('/', function(req, res) {
     res.redirect('/browse/');
@@ -125,4 +156,44 @@ function getFilesFromPath(path) {
     }
 
     return [];
+}
+
+function transformFile(file) {
+    var fileInfo = fsPath.parse(file);
+
+    var transforms = {
+        ".css": function(_file) {
+            var newFile = _file.substr(0, _file.length - 3) + "scss"; // Change from .css to .scss //
+
+            if (!fs.existsSync(newFile)) return null;
+
+            var fileData = fs.readFileSync(newFile, {encoding: "utf8"});
+            return {
+                data: sass.renderSync({
+                    data: fileData
+                }).css,
+                type: "text/css"
+            };
+        },
+        ".js": function(_file) {
+            var newFile = _file.substr(0, _file.length - 3) + "coffee"; // Change from .css to .scss //
+
+            if (!fs.existsSync(newFile)) return null;
+
+            var fileData = fs.readFileSync(_file, {encoding: "utf8"});
+            return {
+                // TODO: Coffeescript compilation //
+                data: fileData,
+                type: "application/javascript"
+            };
+        }
+    }
+
+    var transformation = transforms[fileInfo.ext];
+    if (!transformation(file)) return null;
+    var compilation = transformation ? {
+        data: transformation(file).data,
+        type: transformation(file).type
+    } : null;
+    return compilation && compilation.data ? compilation : null;
 }

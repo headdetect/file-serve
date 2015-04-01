@@ -2,17 +2,19 @@ doctype html
 html(lang="en")
     head
         title= title
+        link(rel='stylesheet', href='/local/main.css')
     body
-        h3 Current Path: #{root}
-        ul
-            if root != '/' && root != ''
-                li
-                    a(href= parent) ..
-            each file in files
-                if file.directory
+        .container
+            h3 Current Path: #{root}
+            ul
+                if root != '/' && root != ''
                     li
-                        a(href='/browse/#{file.path}') #{file.name}
-                else
-                    li
-                        a(href='/raw/#{file.path}') #{file.name}
-                        small  #{file.size}
+                        a(href= parent) ..
+                each file in files
+                    if file.directory
+                        li
+                            a(href='/browse/#{file.path}') #{file.name}
+                    else
+                        li
+                            a(href='/raw/#{file.path}') #{file.name}
+                            small  #{file.size}
