@@ -7,17 +7,17 @@ html(lang="en")
     body
         .container
             h1 Path
-                small.path #{root == '/' || root == '' ? '/' : root}
+                small.path #{root === '/' || root === '' ? '/' : root}
             ul
-                if root != '/' && root != ''
+                if root !== '/' && root !== ''
                     li
                         a(href= parent) ..
                 each file in files
                     if file.directory
                         li
-                            a(href='/browse/#{file.path}') #{file.name}
+                            a(href=`/browse/${file.path}`) #{file.name}
                     else
                         li
-                            a(href='/raw/#{file.path}') #{file.name}
+                            a(href=`/raw/${file.path}`) #{file.name}
                             small.file-size  #{file.size}
         script(src="/local/main.js")

@@ -1,12 +1,16 @@
 {
-  "name": "FileServe",
+  "name": "file-serve",
   "version": "0.0.1",
   "description": "A very lightweight file browser and server",
   "dependencies": {
     "dir": "~0.1.2",
-    "express": "^4.12.3",
-    "jade": "~1.9.2",
-    "node-sass": "^2.1.1",
-    "prettysize": "0.0.3"
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "node-sass": "^4.12.0",
+    "prettysize": "0.0.3",
+    "pug": "~2.0.4"
+  },
+  "scripts": {
+    "start": "node app.js"
   }
 }
